@@ -12,3 +12,27 @@ variable "profile" {
   description = "The AWS profile to use for authentication."
   default     = "default" # You can set your default AWS profile name here.
 }
+
+variable "dynamodb_table_name" {
+  description = "DynamoDB table name"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "Set your VPC IP range"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "subnet_count_per_vpc" {
+  description = "Set the total number of subnets you want to create in the VPC"
+  type        = number
+  default     = 2
+}
+
+# variable "availability_zones" {
+#   description = "Set your AZs"
+#   type    = list(string)
+#   default = ["us-east-1a", "eu-west-1b"] # Add more AZs as needed
+# }
+

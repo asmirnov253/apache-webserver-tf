@@ -16,10 +16,10 @@ provider "aws" {
 }
 
 resource "aws_dynamodb_table" "website_table" {
-  name           = "WebsiteTable" # Replace with your desired table name
-  billing_mode   = "PROVISIONED"  # You can use "PAY_PER_REQUEST" for on-demand capacity mode
-  read_capacity  = 5              # Adjust read capacity units as needed
-  write_capacity = 5              # Adjust write capacity units as needed
+  name           = var.dynamodb_table_name # Replace with your desired table name
+  billing_mode   = "PROVISIONED"           # You can use "PAY_PER_REQUEST" for on-demand capacity mode
+  read_capacity  = 5                       # Adjust read capacity units as needed
+  write_capacity = 5                       # Adjust write capacity units as needed
 
   attribute {
     name = "id"
@@ -28,3 +28,15 @@ resource "aws_dynamodb_table" "website_table" {
   hash_key = "id"
 }
 
+resource "aws_vpc" "site_vpc" { # 
+  cidr_block = var.vpc_cidr     # Set your VPC IP range
+}
+
+# Create Subnets dynamically for VPC
+resource "aws_subnet" "subnets" {
+  count = var.subnet_count_per_vpc
+
+  vpc_id            = aws_vpc.site_vpc.id
+  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 1)
+  availability_zone = format("%s%s", var.region, element(["a", "b"], count.index % 2))
+}
