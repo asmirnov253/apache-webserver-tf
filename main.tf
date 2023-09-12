@@ -50,11 +50,11 @@ resource "aws_subnet" "subnets" {
 }
 
 resource "aws_internet_gateway" "site-gateway" {
-  vpc_id = "vpc-035aae215ad49e162"  # Replace with your VPC ID
+  vpc_id = "vpc-035aae215ad49e162" # Replace with your VPC ID
 }
 
 resource "aws_route" "example" {
-  route_table_id         = "rtb-054b953217e7481fc"  # Replace with your route table ID
+  route_table_id         = "rtb-054b953217e7481fc" # Replace with your route table ID
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.site-gateway.id
 }
@@ -126,7 +126,7 @@ resource "aws_security_group" "webserver_sg" {
   name        = "webserver-sg"
   description = "Security group for web server instances"
   #vpc_id      = "vpc-035aae215ad49e162"
-  vpc_id      = aws_vpc.site_vpc.id
+  vpc_id = aws_vpc.site_vpc.id
 
   ingress {
     from_port   = 80
@@ -138,11 +138,11 @@ resource "aws_security_group" "webserver_sg" {
 
 # Create a launch configuration
 resource "aws_launch_configuration" "webserver_lc" {
-  name_prefix            = "webserver-lc-"
-  image_id               = "ami-02bbe13b2401b91f9" # Specify the desired AMI ID
-  instance_type          = "t2.micro"              # Specify the desired instance type
-  security_groups        = ["sg-091ce69b703308b93"]
-  iam_instance_profile   = aws_iam_instance_profile.website_instance_profile.name
+  name_prefix          = "webserver-lc-"
+  image_id             = "ami-02bbe13b2401b91f9" # Specify the desired AMI ID
+  instance_type        = "t2.micro"              # Specify the desired instance type
+  security_groups      = ["sg-091ce69b703308b93"]
+  iam_instance_profile = aws_iam_instance_profile.website_instance_profile.name
 
   user_data = <<-EOF
               #!/bin/bash
@@ -156,12 +156,12 @@ resource "aws_launch_configuration" "webserver_lc" {
 
 # Create an Auto Scaling Group using the launch configuration
 resource "aws_autoscaling_group" "webserver_asg" {
-  name          = "webserver-asg"
+  name                 = "webserver-asg"
   launch_configuration = aws_launch_configuration.webserver_lc.name
   min_size             = 1
-  max_size             = 2                        # Adjust as needed
-  desired_capacity     = 1                        # Adjust as needed
-  vpc_zone_identifier  = [ "subnet-0d635927f2d5f4685", "subnet-0650e10d59a4c9451" ] # Specify your subnet ID(s)
+  max_size             = 2                                                        # Adjust as needed
+  desired_capacity     = 1                                                        # Adjust as needed
+  vpc_zone_identifier  = ["subnet-0d635927f2d5f4685", "subnet-0650e10d59a4c9451"] # Specify your subnet ID(s)
 
   # Add tags as needed
   tag {
@@ -172,18 +172,18 @@ resource "aws_autoscaling_group" "webserver_asg" {
 }
 
 resource "aws_autoscaling_policy" "webserver_asg_policy" {
-  name                  = "webserver-asg-policy"
-  scaling_adjustment    = 1
-  adjustment_type       = "ChangeInCapacity"
-  cooldown              = 300
-  policy_type           = "SimpleScaling"
+  name                   = "webserver-asg-policy"
+  scaling_adjustment     = 1
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  policy_type            = "SimpleScaling"
   autoscaling_group_name = aws_autoscaling_group.webserver_asg.name
 }
 
 resource "aws_cloudwatch_metric_alarm" "webserver-asg-alarm" {
   alarm_name          = "webserver-asg-alarm"
   comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods = 1
+  evaluation_periods  = 1
   metric_name         = "CPUUtilization"
   namespace           = "AWS/EC2"
   period              = 300
@@ -197,11 +197,11 @@ resource "aws_cloudwatch_metric_alarm" "webserver-asg-alarm" {
 }
 
 resource "aws_lb" "site-alb" {
-  name               = "site-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = ["sg-091ce69b703308b93"]
-  subnets            = [ "subnet-0d635927f2d5f4685", "subnet-0650e10d59a4c9451" ]  # Replace with your desired subnets
+  name                       = "site-alb"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = ["sg-091ce69b703308b93"]
+  subnets                    = ["subnet-0d635927f2d5f4685", "subnet-0650e10d59a4c9451"] # Replace with your desired subnets
   enable_deletion_protection = false
 }
 
@@ -209,7 +209,7 @@ resource "aws_lb_target_group" "site-target-group" {
   name     = "site-target-group"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.site_vpc.id  # Replace with your VPC ID
+  vpc_id   = aws_vpc.site_vpc.id # Replace with your VPC ID
 
   health_check {
     path                = "/"
@@ -228,7 +228,7 @@ resource "aws_lb_listener" "site-lb-listener" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "fixed-response"
+    type = "fixed-response"
     fixed_response {
       content_type = "text/plain"
       status_code  = "200"
