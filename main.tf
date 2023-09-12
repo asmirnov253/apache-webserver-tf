@@ -15,18 +15,18 @@ provider "aws" {
   profile                  = var.profile
 }
 
-resource "aws_dynamodb_table" "website_table" {
-  name           = var.dynamodb_table_name # Replace with your desired table name
-  billing_mode   = "PROVISIONED"           # You can use "PAY_PER_REQUEST" for on-demand capacity mode
-  read_capacity  = 5                       # Adjust read capacity units as needed
-  write_capacity = 5                       # Adjust write capacity units as needed
+# resource "aws_dynamodb_table" "website_table" {
+#   name           = var.dynamodb_table_name # Replace with your desired table name
+#   billing_mode   = "PROVISIONED"           # You can use "PAY_PER_REQUEST" for on-demand capacity mode
+#   read_capacity  = 5                       # Adjust read capacity units as needed
+#   write_capacity = 5                       # Adjust write capacity units as needed
 
-  attribute {
-    name = "id"
-    type = "N"
-  }
-  hash_key = "id"
-}
+#   attribute {
+#     name = "id"
+#     type = "N"
+#   }
+#   hash_key = "id"
+# }
 
 module "s3_bucket" {
   source       = "./modules/s3_bucket" # Path to your module directory
@@ -146,8 +146,8 @@ resource "aws_launch_configuration" "webserver_lc" {
 
   user_data = <<-EOF
               #!/bin/bash
-              yum update -y
-              yum install -y httpd php
+              sudo yum update -y
+              sudo yum install -y httpd php
               service httpd start
               chkconfig httpd on
               aws s3 cp s3://apache-site-bucket/index.php /var/www/html/index.html
