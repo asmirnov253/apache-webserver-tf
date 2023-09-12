@@ -30,9 +30,8 @@ variable "subnet_count_per_vpc" {
   default     = 2
 }
 
-# variable "availability_zones" {
-#   description = "Set your AZs"
-#   type    = list(string)
-#   default = ["us-east-1a", "eu-west-1b"] # Add more AZs as needed
-# }
+variable "bucket_names" {
+  description = "Create yours buckets"
+  type        = list(string)
+}
 
